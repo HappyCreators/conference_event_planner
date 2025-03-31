@@ -3,10 +3,13 @@ import "./ConferenceEvent.css";
 import TotalCost from "./TotalCost";
 import { useSelector, useDispatch } from "react-redux";
 import { incrementQuantity, decrementQuantity } from "./venueSlice";
+import { incrementAvQuantity, decrementAvQuantity } from "./avSlice";
+
 const ConferenceEvent = () => {
     const [showItems, setShowItems] = useState(false);
     const [numberOfPeople, setNumberOfPeople] = useState(1);
     const venueItems = useSelector((state) => state.venue);
+    const avItems = useSelector((state) => state.av);
     const dispatch = useDispatch();
     const remainingAuditoriumQuantity = 3 - venueItems.find(item => item.name === "Auditorium Hall (Capacity:200)").quantity;
 
@@ -29,9 +32,11 @@ const ConferenceEvent = () => {
         }
       };
     const handleIncrementAvQuantity = (index) => {
+        dispatch(incrementAvQuantity(index));
     };
 
     const handleDecrementAvQuantity = (index) => {
+        dispatch(decrementAvQuantity(index));
     };
 
     const handleMealSelection = (index) => {
@@ -47,15 +52,25 @@ const ConferenceEvent = () => {
     const ItemsDisplay = ({ items }) => {
 
     };
+    {/*la guia dice que en VenueSlice tambien se calcula el costo de la
+la siguiente manera, no lo he hecho*/}
     const calculateTotalCost = (section) => {
         let totalCost = 0;
         if (section === "venue") {
           venueItems.forEach((item) => {
             totalCost += item.cost * item.quantity;
           });
+        } else if (section === "av") {
+            avItems.forEach((item) => {
+                totalCost += item.cost * item.quantity;
+            });
         }
         return totalCost;
       };
+
+      {/*Yo agregue esta const <avTotalCost>, revisar el lugar*/}
+    const avTotalCost = calculateTotalCost("av");
+
     const venueTotalCost = calculateTotalCost("venue");
 
     const navigateToProducts = (idType) => {
@@ -89,6 +104,7 @@ const ConferenceEvent = () => {
                              <div id="venue" className="venue_container container_main">
         <div className="text">
  
+                        {/*Venue Layout*/}
           <h1>Venue Room Selection</h1>
         </div>
         <div className="venue_selection">
@@ -144,6 +160,7 @@ const ConferenceEvent = () => {
             </div>
           ))}
         </div>
+        {/*this next line displays the total cost of all selected venue items*/}
         <div className="total_cost">Total Cost: ${venueTotalCost}</div>
       </div>
 
@@ -154,12 +171,28 @@ const ConferenceEvent = () => {
                                 <div className="text">
 
                                     <h1> Add-ons Selection</h1>
-
+                                    {/*I included the next code ->point 14 in lab tab 6*/}
+                                    <div className="addons_selection">
+                                    {avItems.map((item, index) => (
+                                        <div className="av_data venue_main" key={index}>
+                                            <div className="img">
+                                                <img src={item.img} alt={item.name} />
+                                            </div>
+                                        <div className="text"> {item.name} </div>
+                                        <div> ${item.cost} </div>
+                                            <div className="addons_btn">
+                                                <button className="btn-warning" onClick={() => handleDecrementAvQuantity(index)}> &ndash; </button>
+                                                <span className="quantity-value">{item.quantity}</span>
+                                                <button className=" btn-success" onClick={() => handleIncrementAvQuantity(index)}> &#43; </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    </div>
                                 </div>
                                 <div className="addons_selection">
 
                                 </div>
-                                <div className="total_cost">Total Cost:</div>
+                                <div className="total_cost">Total Cost: {avTotalCost}</div>
 
                             </div>
 
