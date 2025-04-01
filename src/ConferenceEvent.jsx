@@ -11,11 +11,10 @@ const ConferenceEvent = () => {
     const [numberOfPeople, setNumberOfPeople] = useState(1);
     const venueItems = useSelector((state) => state.venue);
     const avItems = useSelector((state) => state.av);
+    const mealsItems = useSelector((state) => state.meals);
     const dispatch = useDispatch();
     const remainingAuditoriumQuantity = 3 - venueItems.find(item => item.name === "Auditorium Hall (Capacity:200)").quantity;
-    {/*Revisar const mealsItems y mealsTotalCost*/}
-    const mealsItems = useSelector((state) => state.meals);
-    const mealsTotalCost = calculateTotalCost("meals");
+    
     
     const handleToggleItems = () => {
         console.log("handleToggleItems called");
@@ -87,9 +86,10 @@ la siguiente manera, no lo he hecho*/}
       };
 
       {/*Yo agregue esta const <avTotalCost>, revisar el lugar*/}
-    const avTotalCost = calculateTotalCost("av");
-
+    
     const venueTotalCost = calculateTotalCost("venue");
+    const avTotalCost = calculateTotalCost("av");
+    const mealsTotalCost = calculateTotalCost("meals");
 
     const navigateToProducts = (idType) => {
         if (idType == '#venue' || idType == '#addons' || idType == '#meals') {
@@ -189,8 +189,11 @@ la siguiente manera, no lo he hecho*/}
                                 <div className="text">
 
                                     <h1> Add-ons Selection</h1>
-                                    {/*I included the next code ->point 14 in lab tab 6*/}
-                                    <div className="addons_selection">
+
+                                </div>
+                                    
+
+                                <div className="addons_selection">
                                     {avItems.map((item, index) => (
                                         <div className="av_data venue_main" key={index}>
                                             <div className="img">
@@ -205,11 +208,8 @@ la siguiente manera, no lo he hecho*/}
                                             </div>
                                         </div>
                                     ))}
-                                    </div>
                                 </div>
-                                <div className="addons_selection">
 
-                                </div>
                                 <div className="total_cost">Total Cost: {avTotalCost}</div>
 
                             </div>
@@ -230,6 +230,7 @@ la siguiente manera, no lo he hecho*/}
                                         min="1"
                                     />
                                 </div>
+                                
                                 <div className="meal_selection">
                                 {mealsItems.map((item, index) => (
                                     <div className="meal_item" key={index} style={{ padding: 15 }}>
